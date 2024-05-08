@@ -46,13 +46,13 @@ jobs:
       id: build-crate
       uses: philss/rustler-precompiled-action@v1.1.0
       with:
-        project-name: walle
+        project-name: whatlangex
         project-version: ${{ env.PROJECT_VERSION }}
         target: ${{ matrix.job.target }}
         nif-version: ${{ matrix.nif }}
         use-cross: ${{ matrix.job.use-cross }}
         cross-version: ${{ matrix.job.cross-version || 'v0.2.4' }}
-        project-dir: "native/walle"
+        project-dir: "native/whatlang_nif"
 
     - name: Artifact upload
       uses: actions/upload-artifact@v3
