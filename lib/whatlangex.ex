@@ -3,7 +3,7 @@ defmodule Whatlangex do
   Documentation for `Whatlang`.
   """
 
-  use Rustler, otp_app: :whatlangex, crate: "whatlang_nif"
+  alias Whatlangex.Native
 
   defmodule Detection do
     @moduledoc """
@@ -13,7 +13,7 @@ defmodule Whatlangex do
     @type t :: %__MODULE__{
             lang: String.t(),
             script: String.t(),
-            confidence: float
+            confidence: float()
           }
 
     defstruct [:lang, :script, :confidence]
@@ -28,14 +28,14 @@ defmodule Whatlangex do
       "eng"
 
   """
-  @spec detect(String.t) :: {:ok, Detection.t} | :none
+  @spec detect(String.t()) :: {:ok, Detection.t()} | :none
   def detect(sentence) do
-    case nif_detect(sentence) do
+    case Native.detect(sentence) do
       nil ->
         :none
 
-      {lang, script, confidence} ->
-        {:ok, %Detection{lang: lang, script: script, confidence: confidence}}
+      %Detection{} = detection ->
+        {:ok, detection}
     end
   end
 
@@ -48,9 +48,9 @@ defmodule Whatlangex do
       "Français"
 
   """
-  @spec code_to_name(String.t) :: {:ok, String.t} | :not_found
+  @spec code_to_name(String.t()) :: {:ok, String.t()} | :not_found
   def code_to_name(sentence) do
-    case nif_code_to_name(sentence) do
+    case Native.code_to_name(sentence) do
       nil -> :not_found
       lang_name -> {:ok, lang_name}
     end
@@ -65,27 +65,11 @@ defmodule Whatlangex do
       "English"
 
   """
-  @spec code_to_eng_name(String.t) :: {:ok, String.t} | :not_found
+  @spec code_to_eng_name(String.t()) :: {:ok, String.t()} | :not_found
   def code_to_eng_name(sentence) do
-    case nif_code_to_eng_name(sentence) do
+    case Native.code_to_eng_name(sentence) do
       nil -> :not_found
       lang_name -> {:ok, lang_name}
     end
-  end
-
-  defp nif_detect(_sentence) do
-    error_if_not_nif_loaded()
-  end
-
-  defp nif_code_to_name(_sentence) do
-    error_if_not_nif_loaded()
-  end
-
-  defp nif_code_to_eng_name(_sentence) do
-    error_if_not_nif_loaded()
-  end
-
-  defp error_if_not_nif_loaded do
-    :erlang.nif_error(:nif_not_loaded)
   end
 end
