@@ -1,58 +1,46 @@
 defmodule Whatlangex.MixProject do
   use Mix.Project
 
+  @description "Whatlang NIF bindings"
+  @source_url "https://github.com/pierrelegall/whatlangex"
+  @version "0.3.0"
+
   def project do
     [
       app: :whatlangex,
-      version: "0.2.1",
+      deps: [
+        {:rustler, "~> 0.30", optional: true},
+        {:rustler_precompiled, "~> 0.7"},
+        {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
+      ],
+      description: @description,
       elixir: "~> 1.14",
+      homepage_url: @source_url,
+      package: [
+        maintainers: ["Pierre Le Gall"],
+        name: "Whatlangex",
+        licenses: ["MIT"],
+        links: %{"GitHub" => @source_url},
+        files: [
+          "LICENSE",
+          "README.md",
+          "lib",
+          "native/whatlang_nif/.cargo",
+          "native/whatlang_nif/src",
+          "native/whatlang_nif/Cargo*",
+          "checksum-*.exs",
+          "mix.exs"
+        ]
+      ],
+      source_url: @source_url,
       start_permanent: Mix.env() == :prod,
-      deps: deps(),
-      description: "Whatlang NIF bindings",
-      homepage_url: "https://github.com/pierrelegall/whatlangex",
-      package: package()
+      version: @version
     ]
   end
 
-  def package() do
-    [
-      maintainers: ["Pierre Le Gall"],
-      licenses: ["MIT"],
-      links: %{
-        "Github" => "https://github.com/pierrelegall/whatlangex"
-      },
-      files: package_files()
-    ]
-  end
-
-  # Run "mix help compile.app" to learn about applications.
   def application do
     [
       extra_applications: [:logger]
     ]
-  end
-
-  # Run "mix help deps" to learn about dependencies.
-  defp deps do
-    [
-      {:ex_doc, ">= 0.29.0", only: :dev, runtime: false},
-      {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
-      {:rustler, "~> 0.26.0"}
-    ]
-  end
-
-  defp package_files do
-    ~w(
-      .formatter.exs
-      LICENSE
-      README.md
-      lib/
-      mix.exs
-      native/whatlang_nif/.cargo/
-      native/whatlang_nif/Cargo.lock
-      native/whatlang_nif/Cargo.toml
-      native/whatlang_nif/README.md
-      native/whatlang_nif/src/
-    )
   end
 end
